@@ -87,5 +87,22 @@ res.send(finalFilm)
 });
 
 
+router.get('/numbermissing', function (req, res) {
+
+    let a = [2,4,6,7,8,9]
+    count = a.length-1;
+  let missing = new Array();
+  
+  for (let i = a[0]; i <= count; i++) {
+    if (a.indexOf(i) == -1) {
+       
+      missing.push(i);
+    }
+  }
+//   console.log(missing);
+res.send(missing)
+});
+
+
 module.exports = router;
 // adding this comment for no reason
