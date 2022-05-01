@@ -1,0 +1,62 @@
+const authorModel = require("../model/authorModel");
+const validator = require('validator')
+
+
+//Validation
+const isValid = function (value) {
+    if (typeof value === 'undefined' || value === null) return false
+    if (typeof value === 'string' && value.trim().length === 0) return false
+    return true;
+}
+
+const isValidRequestBody = function (requestBody) {
+    return Object.keys(requestBody).length > 0
+}
+// ===============CreatAuthor===========================================================!!
+
+const createAuthor = async function (req, res) {
+    try {
+        let requestBody = req.body
+
+        if (!isValidRequestBody(requestBody)) {
+            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide author details' })
+            return}
+
+        if (!isValid(requestBody.fname)) {
+            res.status(400).send({ status: false, message: 'First name is required' })
+            return}
+
+        if (!isValid(requestBody.lname)) {
+            res.status(400).send({ status: false, message: 'Last name is required' })
+            return}
+
+        if (!isValid(requestBody.title)) {
+            res.status(400).send({ status: false, message: 'Title is required' })
+            return }
+
+        if (!isValid(requestBody.email)) {
+            res.status(400).send({ status: false, message: 'Email is required' })
+            return}
+
+        if (!isValid(requestBody.password)) {
+            res.status(400).send({ status: false, message: 'Password is required' })
+            return}
+
+        if (!(validator.isEmail(requestBody.email))) {
+            return res.status(400).send({ status: false, msg: 'Not a valid email' })}
+        
+        const isEmailAlreadyUsed = await authorModel.findOne({ email: requestBody.email });
+
+        if (isEmailAlreadyUsed) {
+            res.status(400).send({ status: false, message: `${requestBody.email} Email is already registered` })
+            return}
+
+        let createdAuthor = await authorModel.create(requestBody);
+        res.status(201).send({ status: true, msg: `Author Data captured successfully`, data:createdAuthor });
+
+    } catch (error) {
+        res.status(500).send({ status: false, msg: error.message });
+    }
+};
+
+module.exports.createAuthor = createAuthor;
